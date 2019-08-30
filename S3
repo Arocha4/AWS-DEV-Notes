@@ -1,0 +1,171 @@
+S3 - Simple Storage Service, provides developers and IT teams with secure, durable, highly-scalable, flat object storage. Regional service
+- Object-based storage:
+--- Key, Value store 
+--- Version ID
+--- Metadata
+--- Subresources:
+--- --- Access Control Lists, bucket policies 
+--- --- Torrent
+- Unlimited storage
+- Files can be 0 Bytes to 5 Terabytes
+- File upload multipart after 100MB
+- Files stored in buckets (basically just folders/logical separation)
+- Bucket names have to be unique globally
+- Successful upload will receive HTTP200 code
+- Read after Write consistency for PUTS of new objects
+- Eventual Consistency for overwrite PUTS and DELETES (can take some time)
+- Built for 99.99% availability
+- Amazon guarantees 99.999999999% durability (unlikely to ever lose a file) (11 9s)
+- Tiered storage available
+- Lifecycle management
+- Versioning
+- Encryption
+- Secure your data using Access Control Lists and Bucket Policies
+- Bucket tags are not inherited to files
+
+
+S3 Storage Tiers
+- S3 Standard:
+--- 99.99% available, 99.999999999% durable
+- S3 IA (Infrequently Accessed):
+--- Data that is accessed less often, but requires rapid access. Lower fee than S3 but charged retrieval fee.
+- S3 One Zone IA:
+--- S3 IA but one zone 
+- Glacier:
+--- lease expensive, archival only. Retrieval time takes 3-5 hours
+
+
+S3 Charges
+- Storage
+- Requests
+- Storage Management Pricing (tags)
+- Data Transfer Pricing (cross-region replication)
+- Transfer Accelleration - fast transfers over long distances using CloudFront
+- Can configure bucket as Request Pays if you use multiple AWS accounts and multiple buckets that transfer info between them
+
+
+S3 Versioning
+- Stores all versions of an object (even if you delete an object)
+- Once enabled, versioning cannot be disabled, only suspended
+- Integrates with Lifecycle rules
+- Versioning's MFA Delete capability, which uses MFA, can be used to provide additional layer of security
+
+
+S3 Cross Region Replication
+- Versioning must be enabled on both the source and destination buckets
+- Regions must be unique
+- Files in an existing bucket are not replicated automatically, all new and updated files will be replicated automatically
+- You cannot replicate multiple buckets or daisy chain replication
+- Delete markers are replicated
+- Deleted individual versions or markers will not be replicated
+
+
+S3 Lifecycle Management
+- Can be used with versioning
+- Can be applied to current and previous versions
+- Transition to IA after 30 days is possible, if file is larger than 128k
+- Archive to Glacier after 30 days is possible
+- Can permanently delete after N days
+
+
+S3 Security & Encryption
+- All newly created buckets are private by default
+- You can setup access control for buckets using bucket policies and ACL
+- Buckets can be configured to create access logs which log requests made to the bucket.
+- Methods of Encryption
+--- In Transit
+--- --- SSL/TLS
+--- At Rest
+--- --- Server Side
+--- --- --- S3 Manged Keys SSE-S3
+--- --- --- AWS Key Management Service, Manged Keys SSE-KMS
+--- --- --- Server Side Encryption with Customer Provided Keys SSE-C
+--- --- Client Side Encryption
+
+
+S3 Transfer Accelleration
+- Uses CloudFront Edge Network to accelerate yoru uploads to S3
+
+S3 Static Website Hosting
+- [bucketname].s3-website-[region].amazonaws.com
+- CORS: you can enable cors on the bucket to allow other sites to get the files from the bucket
+- If you want to host a static website in S3, just create a bucket name with the URL (IE, if you want to host something.com, create a bucket name with that name) and create an alias to that bucket. 
+-- If you want to use www.something.com and something.com, you have to create 2 buckets, and configure redirection from www.something.com to something.com in the properties
+
+Dualstack: support for IPV4 and IPV6
+
+- Storage Tiers
+--- S3 Standard
+--- --- 99.99 available, 99.999999999 durable, designed to sustain loss of 2 facilities concurrently
+--- S3 IA (Infrequently Accessed)
+--- --- Accessed less frequently, requires rapid access when needed. Lower fee than S3 but charged for retrieval.
+--- S3 One Zone IA
+--- --- Want lower-cost for infrequent data but doesn't require multiple AZ resiliency
+--- Glacier
+--- --- Cheap, used for archival only. 3-5 hour retrieval time
+
+- Core Fundamentals of S3:
+--- Key
+--- Value
+--- Version ID
+--- Metadata
+--- Subresources
+---- Access Control Lists
+---- Torrent file
+
+- Versioning
+---  Objected based storage (files only, not OS or db)
+---  All version of object are stored, writes and deletes
+---  Once enabled, versioning cannot be disabled, only suspended
+---  Integrates with Lifecycle rules
+---  Versioning's MFA Delete capability can be used to provide additional layer of security
+---  Cross Region Replication, requires versioning on source and destination buckets
+
+- Lifecycle Management
+--- Can be used in conjunction with versioning
+--- Can be applied to current/previous versions
+--- Actions that can be done:
+--- --- Transition to Standard S3 IA after 30 days
+--- --- Archive to Glacier after 30 days
+--- --- Permanently Delete
+
+- CloudFront
+--- Edge Location - location where content will be cached
+--- Origin - Origin of all files that CDN will distribute
+--- Distribution - name given to CDN which consists of collection of Edge Locations
+--- --- Web Distribution - typically used for websites
+--- --- RTMP Distributions - media streaming/flash files
+--- Edge locations are not just read only, you can write to them too
+--- Objects are cached for life of TTL (default 24 hours)
+
+- Securing Buckets
+--- Newly created buckets are private by default
+--- You can setup access control using:
+--- --- Bucket Policies
+--- --- Access Control Lists
+--- Buckets can be configured to create access logs
+
+- Encryption
+--- In Transit
+--- --- SSL/TLS
+--- At Rest
+--- --- Server Side Encryption
+--- --- --- S3 Manged Keys SSE-S3
+--- --- --- AWS Key Management Service, Manged Keys SSE-KMS
+--- --- --- Server Side Encryption with Customer Provided Keys SSE-C
+
+- Storage Gateways
+--- File Gateway - flat files, directly on S3
+--- Volume Gateway
+--- --- Stored Volumes - Entire dataset stored on site, async backed up to S3. Stores data as Amazon EBS snapshots in S3
+--- --- Cached Volumes - Entire dataset stored in S3, most recent data stored onsite
+--- Gateway Virtual Tape Library (VTL) - Used for backup and uses popular backup applications like NetBackup, Backup Exec, Veeam, etc.
+-- Network requirements: Port 443, 80 (activation only) , 3260 (iSCSI targets), UPD53 (dns)
+
+- S3 Transferion Accelleration
+--- Speed up transfers to S3 using S3 transfer acceleration. Costs extra, great impact for people in distant locations.
+
+- S3 Static websites
+- Serverless
+- inexpensive, scales automatically
+- Static only, no compute
